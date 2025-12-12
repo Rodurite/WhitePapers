@@ -41,9 +41,6 @@ constructor(
     seller = _seller;
     expectedAmount = _expectedAmount;
     listingHash = _listingHash;
-    factory = msg.sender; // must be EscrowFactory
-    status = Status.Unfunded;
-}
 ```
 The canonical Rodurite factory address is known and fixed. Any escrow whose `factory` field does not equal this address is rejected by:
 • The Oracle.

@@ -4,7 +4,7 @@
 In the baseline model, any user can:
 1. Call `fund()` on any escrow with the correct ETH amount.
 2. Never perform the Roblox trade.
-3. Wait for the refund window to expire and be refunded by the oracle.
+3. Wait for the seller arming window (48h) or protection window (120h) to expire and be refunded.
 
 An attacker can:
 • Script funding of every active listing on Rodurite.

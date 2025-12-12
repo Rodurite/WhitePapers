@@ -47,7 +47,7 @@ This `listingHash`:
     – The escrow contract at deployment time.
 
 ### 1.3.2 Oracle Resolution
-The Rodurite Oracle, upon seeing a funded escrow, proceeds as follows:
+The Rodurite Oracle, upon seeing an **armed** escrow (signaling the seller has acted), proceeds as follows:
 a) Reads `listingHash` from the escrow contract.
 b) Looks up the corresponding listing record in Rodurite’s database.
 c) Retrieves from the database:

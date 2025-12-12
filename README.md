@@ -26,36 +26,41 @@ In a typical Real-Money Trade (RMT) for a Roblox item:
 ### 3.2 Inefficiency
 Existing centralized marketplaces charge exorbitant fees (often 10-30%) to cover their operational overhead and fraud insurance. They also require custodial deposits, meaning users must trust the platform with their assets.
 
+
 ## 4. The Rodurite Solution
 
-Rodurite introduces a **Hybrid Escrow Model**:
-1.  **On-Chain Custody**: Buyer funds are held in a secure, immutable Smart Contract (`Escrow2P`).
-2.  **Off-Chain Verification**: A specialized Oracle monitors the Roblox blockchain/API to verify that the specific asset (identified by its unique User Asset ID) has moved from the Seller's inventory to the Buyer's inventory.
-3.  **Automated Settlement**: Once verification is complete, the Oracle triggers the Smart Contract to release funds to the Seller. If delivery is not verified within a set window, funds are refunded to the Buyer.
+Rodurite introduces a **Hybrid Escrow Model** with a mandatory **Seller Arming** phase:
+1.  **Fund**: Buyer deposits ETH into the `Escrow2P` contract.
+2.  **Arm**: Seller explicitly "arms" the escrow on-chain, declaring they have sent the trade offer. This starts the protection timer.
+3.  **Verify**: The Rodurite Oracle monitors the Roblox platform for asset transfer.
+4.  **Settle**:
+    *   **Success**: Asset transfer is verified -> Funds released to Seller.
+    *   **Safety**: Trade offer expires or is cancelled (120h max) -> Funds refunded to Buyer.
 
 ## 5. Technical Architecture
 
 ### 5.1 Smart Contracts (Ethereum/EVM)
 The core of the system is the `Escrow2P.sol` contract. Each trade deploys a unique instance of this contract to ensure isolation and security.
 
-*   **State Machine**: The contract moves through strict states: `Unfunded` -> `Funded` -> `Released` OR `Refunded`.
+*   **State Machine**: The contract moves through strict states: `Unfunded` -> `Funded` -> `Armed` -> `Released` OR `Refunded`.
 *   **Immutable Metadata**: Each contract is cryptographically bound to specific trade details:
-    *   `sellerRobloxUserId`: The Roblox ID of the seller.
-    *   `userAssetId`: The unique identifier of the specific item instance.
-    *   `assetId`: The generic catalog ID of the item.
+    *   `listingHash`: An opaque hash unique to the listing (hiding raw Roblox IDs).
     *   `expectedAmount`: The agreed-upon ETH price.
-*   **Mediator Role**: A restricted `mediator` address (controlled by the Rodurite Oracle) is the only entity authorized to trigger `release()` or `refund()`, ensuring that funds cannot be drained by malicious actors.
+*   **Mediator Role**: A restricted `mediator` address (controlled by the Rodurite Oracle) is the only entity authorized to trigger `release()` or `refund()`.
 
 ### 5.2 The Oracle System
-The Rodurite Oracle is a Python-based service responsible for bridging the two worlds.
+The Rodurite Oracle bridges the two worlds.
 
-*   **Monitoring**: It continuously polls the Ethereum blockchain for `Funded` events.
-*   **Verification**: Upon detecting a funded escrow, it queries the Roblox API to check the ownership status of the `userAssetId`.
-    *   *Success Condition*: The asset is found in the Buyer's inventory AND is no longer in the Seller's inventory.
+*   **Monitoring**: It polls for `Funded` and `Armed` events.
+*   **Seller Arming**: The seller has **48 hours** to arm the escrow after funding. Failure to arm results in an automatic refund.
+*   **Verification**: Once armed, the Oracle monitors for the asset transfer.
+    *   *Success Condition*: The asset matches the `listingHash` criteria in the Buyer's inventory.
 *   **Settlement**:
-    *   If verified: The Oracle calls `release()` on the smart contract.
-    *   If unverified after **6 hours** (`REFUND_WINDOW_SECONDS`): The Oracle calls `refund()`, returning the ETH to the buyer.
-*   **Notifications**: An integrated emailer service notifies users of key events (Sale Funded, Delivery Reminder, Sale Complete, Refund Issued).
+    *   If verified: The Oracle calls `release()` immediately.
+    *   If unverifed:
+        *   **Standard Acceptance Window**: Buyer has **48 hours** to accept the trade.
+        *   **Protection Window**: If the trade is still pending, the refund is deferred up to **120 hours** to prevent "accept-after-refund" exploits.
+*   **Notifications**: Automated emails for Funding, Arming, and Completion.
 
 ### 5.3 Frontend Application
 A modern React + Vite application provides the user interface.
@@ -68,8 +73,8 @@ A modern React + Vite application provides the user interface.
 Funds are never held by Rodurite's operational wallets. They reside in the `Escrow2P` contract. The `mediator` key can only direct funds to the pre-agreed Seller (on success) or back to the Buyer (on failure). It cannot redirect funds to arbitrary addresses.
 
 ### 6.2 Anti-Fraud
-*   **Unique Asset Tracking**: By tracking the specific `userAssetId`, Rodurite prevents "bait-and-switch" scams where a seller might try to deliver a lower-value item.
-*   **Time-Locked Refunds**: The 6-hour refund window protects buyers from indefinite lockups if a seller goes unresponsive.
+*   **Unique Asset Tracking**: By tracking the specific `listingHash`, Rodurite prevents "bait-and-switch" scams.
+*   **Deferred Refunds**: The **120-hour protection window** protects sellers from "delayed acceptance" attacks where a buyer accepts a trade after receiving a refund.
 
 ### 6.3 Protocol Fees
 The smart contract enforces a **7% protocol fee** (`FEE_BPS = 700`) on successful trades. This fee is automatically deducted from the payout to the seller and sent to the `FEE_RECIPIENT` address. Refunds are fee-free (100% of ETH is returned to the buyer).
