@@ -27,7 +27,7 @@ In a typical Real-Money Trade (RMT) for a Roblox item:
 Existing centralized marketplaces charge exorbitant fees (often 10-30%) to cover their operational overhead and fraud insurance. They also require custodial deposits, meaning users must trust the platform with their assets.
 
 
-## 4. The Rodurite Solution
+## 4. The Escrow Model
 
 Rodurite introduces a **Hybrid Escrow Model** with a mandatory **Seller Arming** phase:
 1.  **Fund**: Buyer deposits ETH into the `Escrow2P` contract.
