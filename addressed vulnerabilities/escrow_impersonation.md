@@ -13,9 +13,9 @@ Consequences include:
 The underlying issue is a lack of provenance: the chain cannot distinguish a Rodurite-managed escrow instance from a random clone with identical configuration.
 
 ## 2.2 Design Goals
-- **G4**: Make it possible to cryptographically identify escrows created by Rodurite’s canonical factory.
-- **G5**: Restrict Rodurite’s oracle to only process escrows that are both factory-originated and backend-registered.
-- **G6**: Prevent users from interacting with untrusted clone escrows via the official Rodurite UI.
+- Make it possible to cryptographically identify escrows created by Rodurite’s canonical factory.
+- Restrict Rodurite’s oracle to only process escrows that are both factory-originated and backend-registered.
+- Prevent users from interacting with untrusted clone escrows via the official Rodurite UI.
 
 ## 2.3 Solution: Factory Binding and Database Registration
 We add two layers of provenance:
