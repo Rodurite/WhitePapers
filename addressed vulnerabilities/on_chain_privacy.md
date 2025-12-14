@@ -14,9 +14,9 @@ c) Construct a precise, permanent list of accounts engaged in off-platform real-
 This does not break the protocol cryptographically, but it creates a strong, unnecessary linkage between on-chain addresses and specific Roblox accounts, increasing the risk of targeted enforcement or bans against Rodurite users.
 
 ## 1.2 Design Goals
-- **G1**: Remove direct Roblox identifiers from the blockchain.
-- **G2**: Preserve a robust, immutable link between escrows and off-chain listings.
-- **G3**: Keep the oracle capable of performing accurate cross-platform verification.
+- Remove direct Roblox identifiers from the blockchain.
+- Preserve a robust, immutable link between escrows and off-chain listings.
+- Keep the oracle capable of performing accurate cross-platform verification.
 
 ## 1.3 Solution: Opaque Listing Identifiers
 We replace on-chain Roblox identifiers with a single opaque listing identifier, denoted `listingHash`, and move all Roblox-specific data off-chain.
