@@ -2,9 +2,9 @@
 
 ## 1.1 Problem: Public “Ban List” for RMT Participants
 In the initial design, each escrow contract (Escrow2P) stored Roblox-specific identifiers directly on-chain, for example:
-• `sellerRobloxUserId`
-• `userAssetId`
-• `assetId`
+- `sellerRobloxUserId`
+- `userAssetId`
+- `assetId`
 
 Because Ethereum is a public ledger, any actor—including Roblox—can:
 a) Enumerate all Escrow2P instances (e.g., by bytecode and factory address).
@@ -14,9 +14,9 @@ c) Construct a precise, permanent list of accounts engaged in off-platform real-
 This does not break the protocol cryptographically, but it creates a strong, unnecessary linkage between on-chain addresses and specific Roblox accounts, increasing the risk of targeted enforcement or bans against Rodurite users.
 
 ## 1.2 Design Goals
-• **G1**: Remove direct Roblox identifiers from the blockchain.
-• **G2**: Preserve a robust, immutable link between escrows and off-chain listings.
-• **G3**: Keep the oracle capable of performing accurate cross-platform verification.
+- **G1**: Remove direct Roblox identifiers from the blockchain.
+- **G2**: Preserve a robust, immutable link between escrows and off-chain listings.
+- **G3**: Keep the oracle capable of performing accurate cross-platform verification.
 
 ## 1.3 Solution: Opaque Listing Identifiers
 We replace on-chain Roblox identifiers with a single opaque listing identifier, denoted `listingHash`, and move all Roblox-specific data off-chain.
@@ -40,9 +40,9 @@ listingHash = keccak256(
 ```
 
 This `listingHash`:
-• Uniquely identifies the listing and the underlying Roblox item.
-• Does not reveal the underlying Roblox identifiers without the original data and salt.
-• Is stored in both:
+- Uniquely identifies the listing and the underlying Roblox item.
+- Does not reveal the underlying Roblox identifiers without the original data and salt.
+- Is stored in both:
     – The Rodurite backend database.
     – The escrow contract at deployment time.
 
@@ -51,16 +51,16 @@ The Rodurite Oracle, upon seeing an **armed** escrow (signaling the seller has a
 a) Reads `listingHash` from the escrow contract.
 b) Looks up the corresponding listing record in Rodurite’s database.
 c) Retrieves from the database:
-    • Seller Roblox ID.
-    • Buyer Roblox ID (inferred from off-chain context).
-    • `userAssetId` and `assetId`.
+    - Seller Roblox ID.
+    - Buyer Roblox ID (inferred from off-chain context).
+    - `userAssetId` and `assetId`.
 d) Uses the Roblox API to perform the normal inventory checks:
-    • Asset is present in the buyer’s inventory.
-    • Asset is absent from the seller’s inventory.
+    - Asset is present in the buyer’s inventory.
+    - Asset is absent from the seller’s inventory.
 
 Only the backend and oracle ever see raw Roblox identifiers; the blockchain remains agnostic, holding only opaque references.
 
 ## 1.4 Result
-• Roblox or any third party cannot directly map on-chain addresses to Roblox accounts via contract storage alone.
-• The escrow contract retains a deterministic, immutable link to its listing via `listingHash`.
-• Rodurite maintains full off-chain verifiability while significantly improving user privacy.
+- Roblox or any third party cannot directly map on-chain addresses to Roblox accounts via contract storage alone.
+- The escrow contract retains a deterministic, immutable link to its listing via `listingHash`.
+- Rodurite maintains full off-chain verifiability while significantly improving user privacy.
