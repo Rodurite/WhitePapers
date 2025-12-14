@@ -16,9 +16,9 @@ An attacker can:
 The attacker only pays gas and the opportunity cost of temporarily locked ETH, which may be acceptable for a determined adversary.
 
 ## 3.2 Design Goals
-- **G7**: Ensure only vetted buyers can fund escrows.
-- **G8**: Make large-scale griefing significantly more expensive or infeasible.
-- **G9**: Keep the user experience simple for legitimate buyers.
+- Ensure only vetted buyers can fund escrows.
+- Make large-scale griefing significantly more expensive or infeasible.
+- Keep the user experience simple for legitimate buyers.
 
 ## 3.3 Solution: Off-Chain Authorized Funding via ECDSA Tickets
 We introduce a ticket-based authorization layer for funding escrows. Funding is no longer permissionless in the raw contract; it requires a signed approval from a Rodurite backend key.
