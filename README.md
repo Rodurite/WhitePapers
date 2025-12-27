@@ -85,6 +85,20 @@ The smart contract enforces a **7% protocol fee** (`FEE_BPS = 700`) on successfu
 *   **DAO Governance**: Decentralizing the `mediator` role and fee parameter adjustments.
 *   **Generic Asset Support**: Extending the Oracle to support other game economies (e.g., CS2, TF2) that expose public inventory APIs.
 
-## 8. Conclusion
+## 8. Index of Whitepapers
 
-Rodurite represents the next evolution in virtual asset trading. By replacing human middlemen with code and cryptographic verification, we create a safer, faster, and more efficient market for the Roblox economy.
+For detailed technical specifications, please refer to the following documents in this repository:
+
+### 1. Security
+*   [Funding Griefing Prevention](Security/funding_griefing.md)
+*   [Escrow Impersonation Prevention](Security/escrow_impersonation.md)
+*   [On-Chain Privacy](Security/on_chain_privacy.md)
+*   [Roblox UAID Vulnerability](Security/roblox_uaid_vulnerability.md)
+
+### 2. Infrastructure
+*   [Oracle Scalability & Architecture](Infrastructure/oracle_scalability.md)
+
+### 3. Economics
+*   [Delayed Trade Acceptance Policy](Economics/delayed_trade_acceptance.md)
+
+---
